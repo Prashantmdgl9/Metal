@@ -178,22 +178,21 @@ sf_a = sf_a.join(sf_b, on ="origin", how ="inner").sort('Count', ascending = Fal
 sf_a
 source = sf_a.to_dataframe()
 
-chart = alt.Chart(source[0:20]).mark_bar(color='#808080').encode(
+chart = alt.Chart(source[0:30]).mark_bar(color='#845422').encode(
     x=alt.X("Count:Q", axis=alt.Axis(title='Number of metal bands')),
     y=alt.Y('origin:O', sort = '-x', axis=alt.Axis(title='Country of origin')),
     color=alt.condition(
-        alt.datum.origin == "Sweden",  #
+        alt.datum.origin == "Russia",  #
         alt.value('orange'),     # which sets the bar orange.
-        alt.value('grey')   # And if it's not true it sets the bar steelblue.
+        alt.value('#845422')   # And if it's not true it sets the bar steelblue.
     )
-).properties(height=400, width = 600, title='Most metal bands come from these countries')
+).properties(height=400, width = 600, title='Most popular band in the metal obsessed countries')
 
 
 
 text = chart.mark_text(
     align='left',
     baseline='middle',
-    color= 'steelblue',
     dx=3  # Nudges text to right so it doesn't appear on top of the bar
 ).encode(
     text= 'band_name:O'
@@ -227,7 +226,7 @@ with open("countries.geo.json") as f:
 
 
 
-metal_map2 = folium.Map(location=[51.5017963261, 0.00187999248], zoom_start=2, tiles="cartodbdark_matter")
+metal_map2 = folium.Map(location=[51.5017963261, 0.00187999248], zoom_start=2, tiles = 'cartodbdark_matter')
 
 metal_map2
 folium.Choropleth(geo_data=countries, name="choropleth", data=df_m, columns=["origin", "per_cap"],
@@ -240,7 +239,7 @@ import webbrowser
 webbrowser.open(output_file)
 
 
-# Genres over the time
+# Genres over the time - work needs to be done
 sf
 sf.groupby('style', tc.aggregate.COUNT()).sort('Count', ascending = False)
 sf_temp = sf[sf['style'] == "Black"]
@@ -248,6 +247,7 @@ sf_temp.groupby('formed', tc.aggregate.COUNT())
 
 sf[sf['origin'] == "Germany"]
 sf
+# Word clouds
 sf_ma = tc.SFrame.read_csv('data/bands.csv')
 
 sf_ma = sf_ma.rename({'name':'band_name'})
@@ -270,7 +270,7 @@ catcloud = WordCloud(
 ).generate(" ".join(df_wc.theme.dropna().str.replace("|", ",").values))
 
 import matplotlib.pyplot as plt
-plt.figure(figsize=(12,9))
+plt.figure(figsize=(10,7))
 plt.imshow(catcloud, alpha=0.8)
 plt.axis('off')
 plt.show()
